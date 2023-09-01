@@ -13,6 +13,8 @@ import java.util.Map;
 
 @Service
 public class StatsClient extends BaseClient {
+    @Value("${spring.application.name}")
+    private String applicationName;
 
     @Autowired
     public StatsClient(@Value("${stats-server.url}") String serverUrl, RestTemplateBuilder builder) {
@@ -30,12 +32,13 @@ public class StatsClient extends BaseClient {
 
     public ResponseEntity<Object> getStatistics(String start, String end,
                                                 String[] uris, Boolean unique) {
+
         Map<String, Object> parameters = Map.of(
                 "start", start,
                 "end", end,
                 "uris", uris,
                 "unique", unique.toString()
         );
-        return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
+        return get("/" + applicationName + "/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
     }
 }
