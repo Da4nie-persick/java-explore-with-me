@@ -3,6 +3,7 @@ package ru.practicum.explore.categories.mapper;
 import ru.practicum.explore.categories.dto.CategoryDto;
 import ru.practicum.explore.categories.dto.NewCategoryDto;
 import ru.practicum.explore.categories.model.Category;
+
 public class CategoryMapper {
     public static final CategoryDto toCategoryDto(Category category) {
         CategoryDto categoryDto = new CategoryDto();

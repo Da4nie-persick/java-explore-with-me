@@ -8,8 +8,12 @@ import java.util.List;
 
 public interface CompilationService {
     CompilationDto create(NewCompilationDto newCompilationDto);
+
     CompilationDto updateCompilation(Integer compId, UpdateCompilationRequest updateCompilationRequest);
+
     void deleteCompilation(Integer compId);
+
     List<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size);
+
     CompilationDto getCompilationId(Integer compId);
 }

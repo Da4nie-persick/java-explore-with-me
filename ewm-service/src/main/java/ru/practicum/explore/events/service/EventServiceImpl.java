@@ -59,10 +59,10 @@ public class EventServiceImpl implements EventService {
         if (newEventDto.getEventDate() != null && newEventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ValidationException("Field: eventDate. Error: должно содержать дату, которая еще не наступила. Value: " + newEventDto.getEventDate());
         }
-        User initiator = userRepository.findById(userId).
-                orElseThrow(() -> new ObjectNotFoundException("Field: initiator. Error: must not be blank. Value: null"));
-        Category category = categoryRepository.findById(newEventDto.getCategory()).
-                orElseThrow(() -> new ObjectNotFoundException("Field: category. Error: must not be blank. Value: null"));
+        User initiator = userRepository.findById(userId)
+                .orElseThrow(() -> new ObjectNotFoundException("Field: initiator. Error: must not be blank. Value: null"));
+        Category category = categoryRepository.findById(newEventDto.getCategory())
+                .orElseThrow(() -> new ObjectNotFoundException("Field: category. Error: must not be blank. Value: null"));
         Event event = EventMapper.toEvent(newEventDto, initiator, category);
         Integer countConfirmed = requestRepository.countConfirmedByEventId(event.getId());
         return EventMapper.toEventFullDto(eventRepository.save(event), countConfirmed);
@@ -77,8 +77,8 @@ public class EventServiceImpl implements EventService {
         if (updateEventUserRequest.getEventDate() != null && updateEventUserRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ValidationException("Field: eventDate. Error: должно содержать дату, которая еще не наступила. Value: " + updateEventUserRequest.getEventDate());
         }
-        Event event = eventRepository.findEventByIdAndInitiatorId(eventId, userId).
-                orElseThrow(() -> new ObjectNotFoundException("Event with id=" + eventId + "was not found"));
+        Event event = eventRepository.findEventByIdAndInitiatorId(eventId, userId)
+                .orElseThrow(() -> new ObjectNotFoundException("Event with id=" + eventId + "was not found"));
         Integer countConfirmed = requestRepository.countConfirmedByEventId(event.getId());
         if (event.getState() == State.PUBLISHED) {
             throw new ConditionsNotConflictException("Only pending or canceled events can be changed");
@@ -126,14 +126,14 @@ public class EventServiceImpl implements EventService {
     @Transactional
     @Override
     public EventRequestStatusUpdateResult updateStatus(Integer userId, Integer eventId, EventRequestStatusUpdateRequest requestStatus) {
-        Event event = eventRepository.findEventByIdAndInitiatorId(eventId, userId).
-                orElseThrow(() -> new ObjectNotFoundException("Event with id=" + eventId + "was not found"));
+        Event event = eventRepository.findEventByIdAndInitiatorId(eventId, userId)
+                .orElseThrow(() -> new ObjectNotFoundException("Event with id=" + eventId + "was not found"));
         if (requestRepository.countByEventAndStatus(event, RequestStatus.CONFIRMED) >= event.getParticipantLimit()) {
             throw new ConditionsNotConflictException("The participant limit has been reached");
         }
         for (Integer id : requestStatus.getRequestIds()) {
-            Request request = requestRepository.findById(id).
-                    orElseThrow(() -> new ObjectNotFoundException("Request with id=" + id + "was not found"));
+            Request request = requestRepository.findById(id)
+                    .orElseThrow(() -> new ObjectNotFoundException("Request with id=" + id + "was not found"));
             if (!request.getStatus().equals(RequestStatus.PENDING)) {
                 throw new ConditionsNotConflictException("The status can be changed only for applications that are in the " + RequestStatus.PENDING);
             }
@@ -170,8 +170,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto getEventFull(Integer userId, Integer eventId) {
-        Event event = eventRepository.findEventByIdAndInitiatorId(eventId, userId).
-                orElseThrow(() -> new ObjectNotFoundException("Event with id=" + eventId + "was not found"));
+        Event event = eventRepository.findEventByIdAndInitiatorId(eventId, userId)
+                .orElseThrow(() -> new ObjectNotFoundException("Event with id=" + eventId + "was not found"));
         Integer countConfirmed = requestRepository.countConfirmedByEventId(event.getId());
         return EventMapper.toEventFullDto(event, countConfirmed);
     }
@@ -226,8 +226,8 @@ public class EventServiceImpl implements EventService {
     @Transactional
     @Override
     public EventFullDto updateByAdmin(Integer eventId, UpdateEventAdminRequest updateEventAdminRequest) {
-        Event event = eventRepository.findById(eventId).
-                orElseThrow(() -> new ObjectNotFoundException("Event with id=" + eventId + "was not found"));
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new ObjectNotFoundException("Event with id=" + eventId + "was not found"));
         Integer countConfirmed = requestRepository.countConfirmedByEventId(event.getId());
         if (updateEventAdminRequest.getEventDate() != null && updateEventAdminRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(1))) {
             throw new ValidationException("The start date of the event to be modified must be no earlier than an hour from the date of publication");
@@ -315,8 +315,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto getEventId(Integer id, HttpServletRequest httpServletRequest) {
-        Event event = eventRepository.findById(id).
-                orElseThrow(() -> new ObjectNotFoundException("Event with id=" + id + "was not found"));
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new ObjectNotFoundException("Event with id=" + id + "was not found"));
         Integer countConfirmed = requestRepository.countConfirmedByEventId(event.getId());
         if (!event.getState().equals(State.PUBLISHED)) {
             throw new ObjectNotFoundException("Event with id=" + id + "was not found");

@@ -1,6 +1,5 @@
 package ru.practicum.explore.user.service;
 
-import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explore.user.dto.NewUserRequest;
 import ru.practicum.explore.user.dto.UserDto;
 

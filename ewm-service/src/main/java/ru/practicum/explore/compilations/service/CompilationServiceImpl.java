@@ -38,8 +38,8 @@ public class CompilationServiceImpl implements CompilationService {
     @Transactional
     @Override
     public CompilationDto updateCompilation(Integer compId, UpdateCompilationRequest updateCompilationRequest) {
-        Compilation compilation = compilationRepository.findById(compId).
-                orElseThrow(() -> new ObjectNotFoundException("Compilation with id="+ compId + " was not found"));
+        Compilation compilation = compilationRepository.findById(compId)
+                .orElseThrow(() -> new ObjectNotFoundException("Compilation with id=" + compId + " was not found"));
         if (updateCompilationRequest.getTitle() != null) {
             compilation.setTitle(updateCompilationRequest.getTitle());
         }
@@ -56,7 +56,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public void deleteCompilation(Integer compId) {
         if (!compilationRepository.existsById(compId)) {
-            throw new ObjectNotFoundException("Compilation with id="+ compId + " was not found");
+            throw new ObjectNotFoundException("Compilation with id=" + compId + " was not found");
         }
         compilationRepository.deleteById(compId);
     }
@@ -73,8 +73,8 @@ public class CompilationServiceImpl implements CompilationService {
     @Transactional(readOnly = true)
     @Override
     public CompilationDto getCompilationId(Integer compId) {
-        Compilation compilation = compilationRepository.findById(compId).
-                orElseThrow(() -> new ObjectNotFoundException("Compilation with id="+ compId + " was not found"));
+        Compilation compilation = compilationRepository.findById(compId)
+                .orElseThrow(() -> new ObjectNotFoundException("Compilation with id=" + compId + " was not found"));
         return CompilationMapper.toCompilationDto(compilation);
     }
 }

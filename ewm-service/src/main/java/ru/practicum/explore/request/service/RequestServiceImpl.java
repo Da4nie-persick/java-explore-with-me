@@ -31,10 +31,10 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     @Override
     public ParticipationRequestDto create(Integer userId, Integer eventId) {
-        User user = userRepository.findById(userId).
-                orElseThrow(() -> new ObjectNotFoundException("User with id=" + userId + " was not found"));
-        Event event = eventRepository.findById(eventId).
-                orElseThrow(() -> new ObjectNotFoundException("Event with id=" + eventId + " was not found"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ObjectNotFoundException("User with id=" + userId + " was not found"));
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new ObjectNotFoundException("Event with id=" + eventId + " was not found"));
         if (event.getState() != State.PUBLISHED) {
             throw new ConditionsNotConflictException("You cannot participate in an unpublished event");
         }
@@ -85,8 +85,8 @@ public class RequestServiceImpl implements RequestService {
         if (!userRepository.existsById(userId)) {
             throw new ObjectNotFoundException("User with id=" + userId + " was not found");
         }
-        Request request = requestRepository.findById(requestId).
-                orElseThrow(() -> new ObjectNotFoundException("Request with id=" + requestId + "was not found"));
+        Request request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new ObjectNotFoundException("Request with id=" + requestId + "was not found"));
         request.setStatus(RequestStatus.CANCELED);
         return RequestMapper.toParticipationRequestDto(requestRepository.save(request));
     }
