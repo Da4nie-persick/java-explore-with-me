@@ -53,7 +53,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto updateCategory(Integer catId, NewCategoryDto newCategoryDto) {
         Optional<Category> optionalCategory = repository.findByName(newCategoryDto.getName());
         if (optionalCategory.isPresent()) {
-            if (optionalCategory.get().getId() != catId) {
+            if (optionalCategory.get().getId().equals(catId)) {
                 throw new ConditionsNotConflictException("The category with the name=" + newCategoryDto.getName() + " is already presented");
             }
         }
