@@ -30,7 +30,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public CategoryDto create(NewCategoryDto newCategoryDto) {
-        if (repository.findByName(newCategoryDto.getName()).isPresent()) {
+        if (repository.countByNameLike(newCategoryDto.getName()) > 0) {
             throw new ConditionsNotConflictException("The category with the name=" + newCategoryDto.getName() + " is already presented");
         }
         Category category = repository.save(CategoryMapper.toCategory(newCategoryDto));
