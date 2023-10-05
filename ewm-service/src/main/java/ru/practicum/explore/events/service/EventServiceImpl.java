@@ -309,9 +309,9 @@ public class EventServiceImpl implements EventService {
         List<EventShortDto> eventShortDtoList = eventList.stream().map(EventMapper::toEventShortDto).collect(Collectors.toList());
 
         List<ViewStatsDto> viewStats = getViews(eventList);
-        Map<Long, Long> viewMap = new HashMap<>();
+        Map<Integer, Long> viewMap = new HashMap<>();
         for (ViewStatsDto viewStat : viewStats) {
-            viewMap.put(Long.parseLong(viewStat.getUri().replace("/events/", "")), viewStat.getHits());
+            viewMap.put(Integer.parseInt(viewStat.getUri().replace("/events/", "")), viewStat.getHits());
         }
         for (EventShortDto eventShortDto : eventShortDtoList) {
             eventShortDto.setViews(viewMap.get(eventShortDto.getId()));
