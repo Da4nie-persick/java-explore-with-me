@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EventShortDto {
-    private Integer id;
+    private Long id;
     private String annotation;
     private CategoryDtoResponse category;
     private Integer confirmedRequests;
