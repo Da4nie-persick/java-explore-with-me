@@ -23,7 +23,6 @@ public class AdminCompController {
     }
 
     @PatchMapping("/{compId}")
-    @ResponseStatus(HttpStatus.OK)
     public CompilationDto updateCompilation(@Valid @RequestBody UpdateCompilationRequest updateCompilationRequest,
                                             @PathVariable Integer compId) {
         return service.updateCompilation(compId, updateCompilationRequest);

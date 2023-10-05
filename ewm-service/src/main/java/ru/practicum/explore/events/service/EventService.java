@@ -20,13 +20,11 @@ public interface EventService {
 
     List<ParticipationRequestDto> getUserEventRequests(Integer userId, Integer eventId);
 
-    List<EventFullDto> searchEvents(List<Integer> users, List<String> states, List<Integer> categories, String rangeStart,
-                                    String rangeEnd, Integer from, Integer size);
+    List<EventFullDto> searchEvents(SearchParametersAdmin param, Integer from, Integer size);
 
     EventFullDto updateByAdmin(Integer eventId, UpdateEventAdminRequest updateEventAdminRequest);
 
-    List<EventShortDto> searchEventsFilter(String text, List<Integer> categories, Boolean paid, String rangeStart,
-                                           String rangeEnd, Boolean onlyAvailable, String sort, Integer from, Integer size,
+    List<EventShortDto> searchEventsFilter(SearchParametersPublic param, Integer from, Integer size,
                                            HttpServletRequest httpServletRequest);
 
     EventFullDto getEventId(Integer id, HttpServletRequest httpServletRequest);

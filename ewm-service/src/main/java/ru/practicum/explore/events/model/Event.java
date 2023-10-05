@@ -54,6 +54,4 @@ public class Event {
     private State state;
     @Column(name = "title")
     private String title;
-    @Column(name = "views")
-    private Long views = 0L;
 }

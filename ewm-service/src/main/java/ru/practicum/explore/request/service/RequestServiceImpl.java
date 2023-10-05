@@ -31,6 +31,9 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     @Override
     public ParticipationRequestDto create(Integer userId, Integer eventId) {
+        if (requestRepository.findByRequesterIdAndEventId(userId, eventId).isPresent()) {
+            throw new ConditionsNotConflictException("You cannot add a repeat request");
+        }
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("User with id=" + userId + " was not found"));
         Event event = eventRepository.findById(eventId)
@@ -40,9 +43,6 @@ public class RequestServiceImpl implements RequestService {
         }
         if (event.getInitiator().getId().equals(userId)) {
             throw new ConditionsNotConflictException("The initiator of the event cannot add a request to participate in his event");
-        }
-        if (requestRepository.findByRequesterIdAndEventId(userId, eventId).isPresent()) {
-            throw new ConditionsNotConflictException("You cannot add a repeat request");
         }
         if (event.getParticipantLimit() != 0 && (event.getParticipantLimit() - event.getConfirmedRequests()) <= 0) {
             throw new ConditionsNotConflictException("The limit of participation requests has been reached");
@@ -56,11 +56,7 @@ public class RequestServiceImpl implements RequestService {
         if (status == RequestStatus.CONFIRMED) {
             event.setConfirmedRequests(event.getConfirmedRequests() + 1);
         }
-        Request request = new Request();
-        request.setCreated(LocalDateTime.now());
-        request.setEvent(event);
-        request.setRequester(user);
-        request.setStatus(status);
+        Request request = RequestMapper.toRequest(event, user, status);
         return RequestMapper.toParticipationRequestDto(requestRepository.save(request));
     }
 
