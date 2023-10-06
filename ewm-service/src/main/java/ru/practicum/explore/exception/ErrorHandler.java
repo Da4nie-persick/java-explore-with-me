@@ -1,5 +1,6 @@
 package ru.practicum.explore.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,6 +19,17 @@ public class ErrorHandler {
         apiError.setStatus(HttpStatus.BAD_REQUEST);
         apiError.setReason("Incorrectly made request.");
         apiError.setMessage(e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+        apiError.setTimestamp(LocalDateTime.now());
+        return apiError;
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+        ApiError apiError = new ApiError();
+        apiError.setStatus(HttpStatus.CONFLICT);
+        apiError.setReason("For the requested operation the conditions are not met.");
+        apiError.setMessage(e.getMessage());
         apiError.setTimestamp(LocalDateTime.now());
         return apiError;
     }

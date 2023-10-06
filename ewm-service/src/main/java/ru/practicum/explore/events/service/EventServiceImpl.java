@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explore.categories.CategoryRepository;
@@ -279,7 +278,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventShortDto> searchEventsFilter(SearchParametersPublic param, Integer from, Integer size,
                                                   HttpServletRequest httpServletRequest) {
-        Pageable pageable = PageRequest.of(from, size, Sort.by(Sort.Direction.DESC, "eventDate"));
+        Pageable pageable = PageRequest.of(from, size);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime start = param.getRangeStart() == null ? LocalDateTime.now() : LocalDateTime.parse(param.getRangeStart(), formatter);
         LocalDateTime end = param.getRangeEnd() == null ? LocalDateTime.now().plusYears(90) : LocalDateTime.parse(param.getRangeEnd(), formatter);
@@ -296,6 +295,9 @@ public class EventServiceImpl implements EventService {
         }
         if (param.getPaid() == null) {
             param.setPaid(null);
+        }
+        if (param.getSort() == null) {
+            param.setSort(StateSort.EVENT_DATE.toString());
         }
         List<Event> eventList = eventRepository.searchByParam(param.getText(), param.getCategories(), param.getPaid(), start, end, pageable);
         if (param.getOnlyAvailable() == null) {
@@ -316,8 +318,10 @@ public class EventServiceImpl implements EventService {
         for (EventShortDto eventShortDto : eventShortDtoList) {
             eventShortDto.setViews(viewMap.get(eventShortDto.getId()));
         }
-        if (param.getSort() != null && param.getSort().equals(StateSort.VIEWS.toString())) {
+        if (param.getSort().equals(StateSort.VIEWS.toString())) {
             eventShortDtoList.sort((e1, e2) -> e2.getViews().compareTo(e1.getViews()));
+        } else {
+            eventShortDtoList.sort((e1, e2) -> e2.getEventDate().compareTo(e1.getEventDate()));
         }
 
         return eventShortDtoList;

@@ -1,7 +1,6 @@
 package ru.practicum.explore.categories.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,12 +29,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public CategoryDtoResponse create(CategoryDto categoryDto) {
-        Category category;
-        try {
-            category = repository.save(CategoryMapper.toCategory(categoryDto));
-        } catch (DataIntegrityViolationException e) {
-            throw new ConditionsNotConflictException("The category with the name=" + categoryDto.getName() + " is already presented");
-        }
+        Category category = repository.save(CategoryMapper.toCategory(categoryDto));
         return CategoryMapper.toCategoryDto(category);
     }
 
@@ -56,11 +50,8 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = repository.findById(catId)
                 .orElseThrow(() -> new ObjectNotFoundException("Category with id=" + catId + " was not found"));
         category.setName(categoryDto.getName());
-        try {
-            return CategoryMapper.toCategoryDto(repository.saveAndFlush(category));
-        } catch (DataIntegrityViolationException e) {
-            throw new ConditionsNotConflictException("The category with the name=" + categoryDto.getName() + " is already presented");
-        }
+        return CategoryMapper.toCategoryDto(repository.saveAndFlush(category));
+
     }
 
     @Override
