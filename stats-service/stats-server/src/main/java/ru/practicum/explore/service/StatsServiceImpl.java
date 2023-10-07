@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explore.StatsRepository;
 import ru.practicum.explore.dto.EndpointHitDto;
 import ru.practicum.explore.dto.ViewStatsDto;
+import ru.practicum.explore.exception.ValidationException;
 import ru.practicum.explore.mapper.EndpointHitMapper;
 import ru.practicum.explore.model.EndpointHit;
 
@@ -27,7 +28,10 @@ public class StatsServiceImpl implements StatsService {
     @Transactional(readOnly = true)
     @Override
     public List<ViewStatsDto> getStatistics(LocalDateTime start, LocalDateTime end,
-                                            String[] uris, boolean unique) {
+                                            String[] uris, Boolean unique) {
+        if (start.isAfter(end)) {
+            throw new ValidationException("Invalid time");
+        }
         List<ViewStatsDto> list;
         if (uris == null) {
             list = unique ? repository.getAllUniqueStatistics(start, end) : repository.getAllStatistics(start, end);
