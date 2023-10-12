@@ -56,7 +56,7 @@ public class CommentServiceImpl implements CommentService {
         }
         Comment comment = commentRepository.findById(updateComment.getId())
                 .orElseThrow(() -> new ObjectNotFoundException("Comment with id= " + updateComment.getId() + " was not found"));
-        if (comment.getAuthor().getId() != userId) {
+        if (!comment.getAuthor().getId().equals(userId)) {
             throw new ConditionsNotConflictException("Only the author can edit the comment");
         }
         comment.setText(updateComment.getText());
@@ -68,7 +68,7 @@ public class CommentServiceImpl implements CommentService {
     public void deleteComment(Integer userId, Integer comId) {
         Comment comment = commentRepository.findById(comId)
                 .orElseThrow(() -> new ObjectNotFoundException("Comment with id= " + comId + " was not found"));
-        if (comment.getAuthor().getId() != userId) {
+        if (!comment.getAuthor().getId().equals(userId)) {
             throw new ConditionsNotConflictException("Only the author can delete the comment");
         }
         commentRepository.deleteById(comId);
