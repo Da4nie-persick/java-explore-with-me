@@ -236,16 +236,9 @@
 							"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 							"        event = await api.publishEvent(event.id);\r",
 							"        pm.collectionVariables.set(\"eid\", event.id)\r",
-							"        comment = rnd.getComment();\r",
 							"    } catch(err) {\r",
 							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
 							"    }\r",
-							"\r",
-							"    pm.request.body.update({\r",
-							"        mode: 'raw',\r",
-							"        raw: JSON.stringify(comment),\r",
-							"        options: { raw: { language: 'json' } }\r",
-							"    });\r",
 							"};\r",
 							"\r",
 							"const interval = setInterval(() => {}, 1000);\r",
@@ -283,6 +276,15 @@
 			"request": {
 				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"text\": \"Лучше быть последним — первым.\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "{{baseUrl}}/users/:userId/comments?eventId={{eid}}",
 					"host": [
@@ -302,7 +304,7 @@
 					"variable": [
 						{
 							"key": "userId",
-							"value": "199303"
+							"value": "0"
 						}
 					]
 				}
@@ -328,16 +330,9 @@
 							"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 							"        event = await api.publishEvent(event.id);\r",
 							"        pm.collectionVariables.set(\"eid\", event.id)\r",
-							"        comment = rnd.getComment();\r",
 							"    } catch(err) {\r",
 							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
 							"    }\r",
-							"\r",
-							"    pm.request.body.update({\r",
-							"        mode: 'raw',\r",
-							"        raw: JSON.stringify(comment),\r",
-							"        options: { raw: { language: 'json' } }\r",
-							"    });\r",
 							"};\r",
 							"\r",
 							"const interval = setInterval(() => {}, 1000);\r",
@@ -375,6 +370,15 @@
 			"request": {
 				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"text\" : \"На случай\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "{{baseUrl}}/users/:userId/comments?eventId=0",
 					"host": [
@@ -419,16 +423,9 @@
 							"        const category = await api.addCategory(rnd.getCategory());\r",
 							"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 							"        pm.collectionVariables.set(\"eid\", event.id)\r",
-							"        comment = rnd.getComment();\r",
 							"    } catch(err) {\r",
 							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
 							"    }\r",
-							"\r",
-							"    pm.request.body.update({\r",
-							"        mode: 'raw',\r",
-							"        raw: JSON.stringify(comment),\r",
-							"        options: { raw: { language: 'json' } }\r",
-							"    });\r",
 							"};\r",
 							"\r",
 							"const interval = setInterval(() => {}, 1000);\r",
@@ -466,6 +463,15 @@
 			"request": {
 				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"text\": \"Лучше быть.\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "{{baseUrl}}/users/:userId/comments?eventId={{eid}}",
 					"host": [
