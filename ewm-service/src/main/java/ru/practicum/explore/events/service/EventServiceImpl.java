@@ -228,11 +228,9 @@ public class EventServiceImpl implements EventService {
                 .collect(groupingBy(Comment::getEvent, counting()));
         eventList.forEach(event -> event.setComments(comments.get(event)));
 
-        Map<Event, Long> requests = requestRepository.findAllByEventInAndStatus(eventList, RequestStatus.CONFIRMED)
-                .stream().collect(groupingBy(Request::getEvent, counting()));
-
         for (Event event : eventList) {
-            eventFullDtoList.add(EventMapper.toEventFullDto(event, requests.get(event)));
+            Long countConfirmed = requestRepository.countConfirmedByEventId(event.getId());
+            eventFullDtoList.add(EventMapper.toEventFullDto(event, countConfirmed));
         }
         return eventFullDtoList;
     }

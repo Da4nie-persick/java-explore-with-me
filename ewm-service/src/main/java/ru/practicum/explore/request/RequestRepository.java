@@ -21,7 +21,5 @@ public interface RequestRepository extends JpaRepository<Request, Integer> {
 
     Long countConfirmedByEventId(Integer eventId);
 
-    List<Request> findAllByEventInAndStatus(List<Event> events, RequestStatus status);
-
     Integer countByEventAndStatus(Event event, RequestStatus requestStatus);
 }
