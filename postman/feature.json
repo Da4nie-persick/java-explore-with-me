@@ -83,7 +83,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"text\": \"Лучше быть последним — первым, чем первым — последним.\"}",
+					"raw": "{ \r\n    \"eventId\" : {{eid}},\r\n    \"text\": \"Лучше быть последним — первым, чем первым — последним.\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -91,7 +91,7 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/users/:userId/comments?eventId={{eid}}",
+					"raw": "{{baseUrl}}/users/:userId/comments",
 					"host": [
 						"{{baseUrl}}"
 					],
@@ -99,12 +99,6 @@
 						"users",
 						":userId",
 						"comments"
-					],
-					"query": [
-						{
-							"key": "eventId",
-							"value": "{{eid}}"
-						}
 					],
 					"variable": [
 						{
@@ -184,7 +178,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"name\" : \"еееееееееееееееееееееееееееееееееееееееееееееееееее\"}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -192,7 +186,7 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/users/:userId/comments?eventId={{eid}}",
+					"raw": "{{baseUrl}}/users/:userId/comments",
 					"host": [
 						"{{baseUrl}}"
 					],
@@ -200,12 +194,6 @@
 						"users",
 						":userId",
 						"comments"
-					],
-					"query": [
-						{
-							"key": "eventId",
-							"value": "{{eid}}"
-						}
 					],
 					"variable": [
 						{
@@ -278,7 +266,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"text\": \"Лучше быть последним — первым.\"}",
+					"raw": "{\r\n    \"eventId\" : {{eid}},\r\n    \"text\": \"Лучше быть последним — первым, чем первым — последним.\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -286,7 +274,7 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/users/:userId/comments?eventId={{eid}}",
+					"raw": "{{baseUrl}}/users/:userId/comments",
 					"host": [
 						"{{baseUrl}}"
 					],
@@ -294,12 +282,6 @@
 						"users",
 						":userId",
 						"comments"
-					],
-					"query": [
-						{
-							"key": "eventId",
-							"value": "{{eid}}"
-						}
 					],
 					"variable": [
 						{
@@ -372,7 +354,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"text\" : \"На случай\"}",
+					"raw": "{\r\n    \"eventId\" : 0,\r\n    \"text\" : \"На случай\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -380,7 +362,7 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/users/:userId/comments?eventId=0",
+					"raw": "{{baseUrl}}/users/:userId/comments",
 					"host": [
 						"{{baseUrl}}"
 					],
@@ -388,12 +370,6 @@
 						"users",
 						":userId",
 						"comments"
-					],
-					"query": [
-						{
-							"key": "eventId",
-							"value": "0"
-						}
 					],
 					"variable": [
 						{
@@ -465,7 +441,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"text\": \"Лучше быть.\"}",
+					"raw": "{\r\n    \"eventId\" : {{eid}},\r\n    \"text\": \"Лучше быть.\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -473,7 +449,7 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/users/:userId/comments?eventId={{eid}}",
+					"raw": "{{baseUrl}}/users/:userId/comments",
 					"host": [
 						"{{baseUrl}}"
 					],
@@ -481,12 +457,6 @@
 						"users",
 						":userId",
 						"comments"
-					],
-					"query": [
-						{
-							"key": "eventId",
-							"value": "{{eid}}"
-						}
 					],
 					"variable": [
 						{
@@ -517,7 +487,7 @@
 							"        let event = await api.addEvent(1, rnd.getEvent(category.id));\r",
 							"        event = await api.publishEvent(event.id);\r",
 							"        pm.collectionVariables.set(\"eid\", event.id);\r",
-							"        const comment = await api.addComment(1, event.id, rnd.getComment());\r",
+							"        const comment = await api.addComment(1, rnd.getComment(event.id));\r",
 							"        pm.collectionVariables.set('comid', comment.id);\r",
 							"    } catch(err) {\r",
 							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
@@ -601,7 +571,7 @@
 							"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 							"        event = await api.publishEvent(event.id);\r",
 							"        pm.collectionVariables.set(\"eid\", event.id)\r",
-							"        const comment = await api.addComment(user.id, event.id, rnd.getComment());\r",
+							"        const comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
 							"        pm.collectionVariables.set('comid', comment.id);\r",
 							"    } catch(err) {\r",
 							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
@@ -687,7 +657,7 @@
 							"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 							"        event = await api.publishEvent(event.id);\r",
 							"        pm.collectionVariables.set(\"eid\", event.id)\r",
-							"        const comment = await api.addComment(user.id, event.id, rnd.getComment());\r",
+							"        const comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
 							"        pm.collectionVariables.set('comid', comment.id);\r",
 							"    } catch(err) {\r",
 							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
@@ -773,7 +743,7 @@
 							"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 							"        event = await api.publishEvent(event.id);\r",
 							"        pm.collectionVariables.set(\"eid\", event.id)\r",
-							"        const comment = await api.addComment(user.id, event.id, rnd.getComment());\r",
+							"        const comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
 							"        pm.collectionVariables.set('comid', comment.id);\r",
 							"    } catch(err) {\r",
 							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
@@ -852,7 +822,7 @@
 							"        let event = await api.addEvent(1, rnd.getEvent(category.id));\r",
 							"        event = await api.publishEvent(event.id);\r",
 							"        pm.collectionVariables.set(\"eid\", event.id)\r",
-							"        const comment = await api.addComment(1, event.id, rnd.getComment());\r",
+							"        const comment = await api.addComment(1, rnd.getComment(event.id));\r",
 							"        pm.collectionVariables.set('comid', comment.id);\r",
 							"    } catch(err) {\r",
 							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
@@ -919,15 +889,14 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/users/:userId/comments/",
+					"raw": "{{baseUrl}}/users/:userId/comments",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"users",
 						":userId",
-						"comments",
-						""
+						"comments"
 					],
 					"variable": [
 						{
@@ -958,7 +927,7 @@
 							"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 							"        event = await api.publishEvent(event.id);\r",
 							"        pm.collectionVariables.set(\"eid\", event.id)\r",
-							"        const comment = await api.addComment(user.id, event.id, rnd.getComment());\r",
+							"        const comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
 							"        pm.collectionVariables.set('comid', comment.id);\r",
 							"    } catch(err) {\r",
 							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
@@ -1048,7 +1017,7 @@
 							"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 							"        event = await api.publishEvent(event.id);\r",
 							"        pm.collectionVariables.set(\"eid\", event.id)\r",
-							"        const comment = await api.addComment(user.id, event.id, rnd.getComment());\r",
+							"        const comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
 							"        pm.collectionVariables.set('comid', comment.id);\r",
 							"    } catch(err) {\r",
 							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
@@ -1138,7 +1107,7 @@
 							"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 							"        event = await api.publishEvent(event.id);\r",
 							"        pm.collectionVariables.set(\"eid\", event.id)\r",
-							"        const comment = await api.addComment(user.id, event.id, rnd.getComment());\r",
+							"        const comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
 							"        pm.collectionVariables.set('comid', comment.id);\r",
 							"    } catch(err) {\r",
 							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
@@ -1236,7 +1205,7 @@
 							"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 							"        event = await api.publishEvent(event.id);\r",
 							"        pm.collectionVariables.set(\"eid\", event.id)\r",
-							"        const comment = await api.addComment(user.id, event.id, rnd.getComment());\r",
+							"        const comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
 							"        pm.collectionVariables.set('comid', comment.id);\r",
 							"    } catch(err) {\r",
 							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
@@ -1318,7 +1287,7 @@
 							"        const category = await api.addCategory(rnd.getCategory());\r",
 							"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 							"        event = await api.publishEvent(event.id);\r",
-							"        const first_comment = await api.addComment(user.id, event.id, rnd.getComment());\r",
+							"        const first_comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
 							"        pm.collectionVariables.set('response', first_comment);\r",
 							"    } catch(err) {\r",
 							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
@@ -1424,8 +1393,8 @@
 							"        const category = await api.addCategory(rnd.getCategory());\r",
 							"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 							"        event = await api.publishEvent(event.id);\r",
-							"        const first_comment = await api.addComment(user.id, event.id, rnd.getComment());\r",
-							"        const second_comment = await api.addComment(user.id, event.id, rnd.getComment());\r",
+							"        const first_comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
+							"        const second_comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
 							"        pm.collectionVariables.set('response', first_comment);\r",
 							"        pm.collectionVariables.set('response2', second_comment);\r",
 							"        pm.collectionVariables.set(\"eid\", event.id)\r",
@@ -1533,7 +1502,7 @@
 							"        const category = await api.addCategory(rnd.getCategory());\r",
 							"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 							"        event = await api.publishEvent(event.id);\r",
-							"        const comment = await api.addComment(user.id, event.id, rnd.getComment());\r",
+							"        const comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
 							"        pm.collectionVariables.set(\"comid\", comment.id)\r",
 							"        pm.collectionVariables.set('response', comment);\r",
 							"        pm.collectionVariables.set(\"eid\", event.id)\r",
@@ -1637,7 +1606,7 @@
 							"        const category = await api.addCategory(rnd.getCategory());\r",
 							"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 							"        event = await api.publishEvent(event.id);\r",
-							"        const first_comment = await api.addComment(user.id, event.id, rnd.getComment());\r",
+							"        const first_comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
 							"        pm.request.removeQueryParams(['text']);\r",
 							"        pm.request.addQueryParams([`text=` + \"\"]);\r",
 							"        pm.collectionVariables.set('response', first_comment);\r",
@@ -1719,7 +1688,7 @@
 							"        const category = await api.addCategory(rnd.getCategory());\r",
 							"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 							"        event = await api.publishEvent(event.id);\r",
-							"        const comment = await api.addComment(user.id, event.id, rnd.getComment());\r",
+							"        const comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
 							"        pm.collectionVariables.set('response', comment);\r",
 							"        pm.collectionVariables.set(\"comid\", comment.id);\r",
 							"        pm.collectionVariables.set(\"eid\", event.id)\r",
@@ -1816,7 +1785,7 @@
 							"        const category = await api.addCategory(rnd.getCategory());\r",
 							"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 							"        event = await api.publishEvent(event.id);\r",
-							"        const comment = await api.addComment(user.id, event.id, rnd.getComment());\r",
+							"        const comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
 							"        pm.collectionVariables.set(\"eid\", event.id)\r",
 							"    } catch(err) {\r",
 							"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
@@ -1895,7 +1864,7 @@
 							"        const category = await api.addCategory(rnd.getCategory());\r",
 							"        let event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 							"        event = await api.publishEvent(event.id);\r",
-							"        const comment = await api.addComment(user.id, event.id, rnd.getComment());\r",
+							"        const comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
 							"        pm.collectionVariables.set('response', comment);\r",
 							"        pm.collectionVariables.set(\"eid\", event.id)\r",
 							"    } catch(err) {\r",
@@ -2034,9 +2003,8 @@
 					"        return this.post(\"/admin/compilations\", compilation, \"Ошибка при добавлении новой подборки: \", verbose);",
 					"    }",
 					"",
-					"    async addComment(userId, eventId, comment, verbose=null) {",
-					"        return this.post('/users/' + userId + '/comments?eventId=' + eventId, ",
-					"        comment, \"Ошибка при добавлении новой подборки: \", verbose);",
+					"    async addComment(userId, comment, verbose=null) {",
+					"        return this.post('/users/' + userId + '/comments', comment, \"Ошибка при добавлении новой подборки: \", verbose);",
 					"    }",
 					"",
 					"    async publishParticipationRequest(eventId, userId, verbose=null) {",
@@ -2170,8 +2138,9 @@
 					"        };",
 					"    }",
 					"",
-					"    getComment() {",
+					"    getComment(eventId) {",
 					"        return {",
+					"            eventId : eventId,",
 					"            text: pm.variables.replaceIn('{{$randomLoremSentence}}')",
 					"        };",
 					"    }",
