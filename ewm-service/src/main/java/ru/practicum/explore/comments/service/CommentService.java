@@ -7,7 +7,7 @@ import ru.practicum.explore.comments.dto.UpdateComment;
 import java.util.List;
 
 public interface CommentService {
-    CommentDto create(Integer userId, Integer eventId, NewCommentDto newCommentDto);
+    CommentDto create(Integer userId, NewCommentDto newCommentDto);
 
     CommentDto updateComment(Integer userId, UpdateComment updateCommentDto);
 

@@ -19,6 +19,7 @@ import ru.practicum.explore.exception.ObjectNotFoundException;
 import ru.practicum.explore.user.UserRepository;
 import ru.practicum.explore.user.model.User;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,13 +37,13 @@ public class CommentServiceImpl implements CommentService {
      */
     @Transactional
     @Override
-    public CommentDto create(Integer userId, Integer eventId, NewCommentDto newCommentDto) {
+    public CommentDto create(Integer userId, NewCommentDto newCommentDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("User with id= " + userId + " was not found"));
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new ObjectNotFoundException("Event with id= " + eventId + " was not found"));
+        Event event = eventRepository.findById(newCommentDto.getEventId())
+                .orElseThrow(() -> new ObjectNotFoundException("Event with id= " + newCommentDto.getEventId() + " was not found"));
         if (event.getState().equals(State.PENDING)) {
-            throw new ConditionsNotConflictException("The event with id= " + eventId + " has not been published yet, you can't leave a comment");
+            throw new ConditionsNotConflictException("The event with id= " + newCommentDto.getEventId() + " has not been published yet, you can't leave a comment");
         }
         Comment comment = CommentMapper.toComment(newCommentDto, user, event);
         return CommentMapper.toCommentDto(commentRepository.save(comment));
@@ -60,6 +61,7 @@ public class CommentServiceImpl implements CommentService {
             throw new ConditionsNotConflictException("Only the author can edit the comment");
         }
         comment.setText(updateComment.getText());
+        comment.setEdited(LocalDateTime.now());
         return CommentMapper.toCommentDto(commentRepository.save(comment));
     }
 
@@ -98,6 +100,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findById(updateComment.getId())
                 .orElseThrow(() -> new ObjectNotFoundException("Comment with id= " + updateComment.getId() + " was not found"));
         comment.setText(updateComment.getText());
+        comment.setEdited(LocalDateTime.now());
         return CommentMapper.toCommentDto(commentRepository.save(comment));
     }
 

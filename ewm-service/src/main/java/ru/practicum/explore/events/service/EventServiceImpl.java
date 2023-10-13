@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explore.categories.CategoryRepository;
 import ru.practicum.explore.categories.model.Category;
 import ru.practicum.explore.client.StatsClient;
+import ru.practicum.explore.comments.CommentRepository;
 import ru.practicum.explore.dto.ViewStatsDto;
 import ru.practicum.explore.events.EventRepository;
 import ru.practicum.explore.events.dto.*;
@@ -47,6 +48,7 @@ public class EventServiceImpl implements EventService {
     private final CategoryRepository categoryRepository;
     private final RequestRepository requestRepository;
     private final StatsClient client;
+    private final CommentRepository commentRepository;
 
     /*
     private
@@ -163,7 +165,12 @@ public class EventServiceImpl implements EventService {
     public List<EventShortDto> getEvent(Integer userId, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from, size);
         List<Event> eventList = eventRepository.findAllByInitiatorId(userId, pageable);
-        return eventList.stream().map(EventMapper::toEventShortDto).collect(Collectors.toList());
+        List<EventShortDto> eventShortDtoList = eventList.stream().map(EventMapper::toEventShortDto).collect(Collectors.toList());
+        for (EventShortDto eventShortDto : eventShortDtoList) {
+            Integer countComment = commentRepository.countCommentByEventId(eventShortDto.getId());
+            eventShortDto.setComments(countComment);
+        }
+        return eventShortDtoList;
     }
 
     @Override
@@ -171,7 +178,10 @@ public class EventServiceImpl implements EventService {
         Event event = eventRepository.findEventByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new ObjectNotFoundException("Event with id=" + eventId + "was not found"));
         Integer countConfirmed = requestRepository.countConfirmedByEventId(event.getId());
-        return EventMapper.toEventFullDto(event, countConfirmed);
+        Integer countComment = commentRepository.countCommentByEventId(event.getId());
+        EventFullDto eventFullDto = EventMapper.toEventFullDto(event, countConfirmed);
+        eventFullDto.setComments(countComment);
+        return eventFullDto;
     }
 
     @Override
@@ -215,7 +225,11 @@ public class EventServiceImpl implements EventService {
 
         for (Event event : eventList) {
             Integer countConfirmed = requestRepository.countConfirmedByEventId(event.getId());
-            eventFullDtoList.add(EventMapper.toEventFullDto(event, countConfirmed));
+            Integer countComment = commentRepository.countCommentByEventId(event.getId());
+            EventFullDto eventFullDto = EventMapper.toEventFullDto(event, countConfirmed);
+            eventFullDto.setComments(countComment);
+            eventFullDtoList.add(eventFullDto);
+
         }
         return eventFullDtoList;
     }
@@ -316,7 +330,9 @@ public class EventServiceImpl implements EventService {
             viewMap.put(Integer.parseInt(viewStat.getUri().replace("/events/", "")), viewStat.getHits());
         }
         for (EventShortDto eventShortDto : eventShortDtoList) {
+            Integer countComment = commentRepository.countCommentByEventId(eventShortDto.getId());
             eventShortDto.setViews(viewMap.get(eventShortDto.getId()));
+            eventShortDto.setComments(countComment);
         }
         if (param.getSort().equals(StateSort.VIEWS.toString())) {
             eventShortDtoList.sort((e1, e2) -> e2.getViews().compareTo(e1.getViews()));
@@ -332,11 +348,13 @@ public class EventServiceImpl implements EventService {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Event with id=" + id + "was not found"));
         Integer countConfirmed = requestRepository.countConfirmedByEventId(event.getId());
+        Integer countComment = commentRepository.countCommentByEventId(event.getId());
         if (!event.getState().equals(State.PUBLISHED)) {
             throw new ObjectNotFoundException("Event with id=" + id + "was not found");
         }
         client.save(StatsMapper.toEndpointHit(httpServletRequest));
         EventFullDto eventFullDto = EventMapper.toEventFullDto(event, countConfirmed);
+        eventFullDto.setComments(countComment);
         List<ViewStatsDto> viewStats = getViews(List.of(event));
         eventFullDto.setViews(viewStats.get(0).getHits());
         return eventFullDto;

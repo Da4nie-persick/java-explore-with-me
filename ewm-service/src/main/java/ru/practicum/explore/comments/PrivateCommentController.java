@@ -23,9 +23,8 @@ public class PrivateCommentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CommentDto create(@PathVariable Integer userId, @RequestParam Integer eventId,
-                             @Valid @RequestBody NewCommentDto newCommentDto) {
-        return commentService.create(userId, eventId, newCommentDto);
+    public CommentDto create(@PathVariable Integer userId, @Valid @RequestBody NewCommentDto newCommentDto) {
+        return commentService.create(userId, newCommentDto);
     }
 
     @PatchMapping

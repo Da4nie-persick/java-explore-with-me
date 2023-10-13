@@ -32,4 +32,6 @@ public class Comment {
     @CreationTimestamp
     @Column(name = "created", nullable = false)
     private LocalDateTime created;
+    @Column(name = "edited", nullable = false)
+    private LocalDateTime edited;
 }

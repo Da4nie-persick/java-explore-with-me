@@ -23,6 +23,7 @@ public class CommentMapper {
         commentDto.setAuthor(UserMapper.toUserShortDto(comment.getAuthor()));
         commentDto.setEvent(comment.getEvent().getId());
         commentDto.setCreated(comment.getCreated());
+        commentDto.setEdited(comment.getEdited());
         return commentDto;
     }
 }

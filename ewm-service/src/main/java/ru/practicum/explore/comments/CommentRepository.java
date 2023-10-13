@@ -19,4 +19,6 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     List<Comment> findAllByAuthorIdOrderByCreated(Integer authorId, Pageable pageable);
 
     List<Comment> findAllByAuthorIdAndEventIdOrderByCreated(Integer authorId, Integer eventId, Pageable pageable);
+
+    Integer countCommentByEventId(Integer eventId);
 }
