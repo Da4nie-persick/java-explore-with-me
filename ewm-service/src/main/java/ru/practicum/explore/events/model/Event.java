@@ -26,7 +26,7 @@ public class Event {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
     @Column(name = "confirmed_requests")
-    private Integer confirmedRequests = 0;
+    private Long confirmedRequests = 0L;
     @Column(name = "created_on")
     private LocalDateTime createdOn;
     @Column(name = "description")
@@ -54,4 +54,6 @@ public class Event {
     private State state;
     @Column(name = "title")
     private String title;
+    @Column(name = "comments")
+    private Long comments;
 }

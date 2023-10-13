@@ -28,7 +28,7 @@ public class EventMapper {
         return event;
     }
 
-    public static EventFullDto toEventFullDto(Event event, Integer confirmed) {
+    public static EventFullDto toEventFullDto(Event event, Long confirmed) {
         EventFullDto eventFullDto = new EventFullDto();
         eventFullDto.setId(event.getId());
         eventFullDto.setAnnotation(event.getAnnotation());
@@ -45,6 +45,7 @@ public class EventMapper {
         eventFullDto.setRequestModeration(event.getRequestModeration());
         eventFullDto.setState(event.getState());
         eventFullDto.setTitle(event.getTitle());
+        eventFullDto.setComments(event.getComments());
         return eventFullDto;
     }
 
