@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.practicum.explore.comments.model.Comment;
+import ru.practicum.explore.events.model.Event;
 
 import java.util.List;
 
@@ -20,5 +21,7 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
     List<Comment> findAllByAuthorIdAndEventIdOrderByCreated(Integer authorId, Integer eventId, Pageable pageable);
 
-    Integer countCommentByEventId(Integer eventId);
+    Long countCommentByEventId(Integer eventId);
+
+    List<Comment> findAllByEventIn(List<Event> events);
 }

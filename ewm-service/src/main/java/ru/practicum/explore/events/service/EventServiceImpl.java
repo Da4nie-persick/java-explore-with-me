@@ -11,6 +11,7 @@ import ru.practicum.explore.categories.CategoryRepository;
 import ru.practicum.explore.categories.model.Category;
 import ru.practicum.explore.client.StatsClient;
 import ru.practicum.explore.comments.CommentRepository;
+import ru.practicum.explore.comments.model.Comment;
 import ru.practicum.explore.dto.ViewStatsDto;
 import ru.practicum.explore.events.EventRepository;
 import ru.practicum.explore.events.dto.*;
@@ -38,6 +39,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -64,7 +68,7 @@ public class EventServiceImpl implements EventService {
         Category category = categoryRepository.findById(newEventDto.getCategory())
                 .orElseThrow(() -> new ObjectNotFoundException("Field: category. Error: must not be blank. Value: null"));
         Event event = EventMapper.toEvent(newEventDto, initiator, category);
-        Integer countConfirmed = requestRepository.countConfirmedByEventId(event.getId());
+        Long countConfirmed = requestRepository.countConfirmedByEventId(event.getId());
         return EventMapper.toEventFullDto(eventRepository.save(event), countConfirmed);
     }
 
@@ -79,7 +83,7 @@ public class EventServiceImpl implements EventService {
         }
         Event event = eventRepository.findEventByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new ObjectNotFoundException("Event with id=" + eventId + "was not found"));
-        Integer countConfirmed = requestRepository.countConfirmedByEventId(event.getId());
+        Long countConfirmed = requestRepository.countConfirmedByEventId(event.getId());
         if (event.getState() == State.PUBLISHED) {
             throw new ConditionsNotConflictException("Only pending or canceled events can be changed");
         }
@@ -165,23 +169,20 @@ public class EventServiceImpl implements EventService {
     public List<EventShortDto> getEvent(Integer userId, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from, size);
         List<Event> eventList = eventRepository.findAllByInitiatorId(userId, pageable);
-        List<EventShortDto> eventShortDtoList = eventList.stream().map(EventMapper::toEventShortDto).collect(Collectors.toList());
-        for (EventShortDto eventShortDto : eventShortDtoList) {
-            Integer countComment = commentRepository.countCommentByEventId(eventShortDto.getId());
-            eventShortDto.setComments(countComment);
-        }
-        return eventShortDtoList;
+        Map<Event, Long> comments = commentRepository.findAllByEventIn(eventList).stream()
+                .collect(groupingBy(Comment::getEvent, counting()));
+        eventList.forEach(event -> event.setComments(comments.get(event)));
+        return eventList.stream().map(EventMapper::toEventShortDto).collect(Collectors.toList());
     }
 
     @Override
     public EventFullDto getEventFull(Integer userId, Integer eventId) {
         Event event = eventRepository.findEventByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new ObjectNotFoundException("Event with id=" + eventId + "was not found"));
-        Integer countConfirmed = requestRepository.countConfirmedByEventId(event.getId());
-        Integer countComment = commentRepository.countCommentByEventId(event.getId());
-        EventFullDto eventFullDto = EventMapper.toEventFullDto(event, countConfirmed);
-        eventFullDto.setComments(countComment);
-        return eventFullDto;
+        Long countConfirmed = requestRepository.countConfirmedByEventId(event.getId());
+        Long countComment = commentRepository.countCommentByEventId(event.getId());
+        event.setComments(countComment);
+        return EventMapper.toEventFullDto(event, countConfirmed);
     }
 
     @Override
@@ -223,13 +224,15 @@ public class EventServiceImpl implements EventService {
         }
         List<Event> eventList = eventRepository.findEventsByParam(param.getUsers(), stateList, param.getCategories(), start, end, pageable);
 
-        for (Event event : eventList) {
-            Integer countConfirmed = requestRepository.countConfirmedByEventId(event.getId());
-            Integer countComment = commentRepository.countCommentByEventId(event.getId());
-            EventFullDto eventFullDto = EventMapper.toEventFullDto(event, countConfirmed);
-            eventFullDto.setComments(countComment);
-            eventFullDtoList.add(eventFullDto);
+        Map<Event, Long> comments = commentRepository.findAllByEventIn(eventList).stream()
+                .collect(groupingBy(Comment::getEvent, counting()));
+        eventList.forEach(event -> event.setComments(comments.get(event)));
 
+        Map<Event, Long> requests = requestRepository.findAllByEventInAndStatus(eventList, RequestStatus.CONFIRMED)
+                .stream().collect(groupingBy(Request::getEvent, counting()));
+
+        for (Event event : eventList) {
+            eventFullDtoList.add(EventMapper.toEventFullDto(event, requests.get(event)));
         }
         return eventFullDtoList;
     }
@@ -239,7 +242,7 @@ public class EventServiceImpl implements EventService {
     public EventFullDto updateByAdmin(Integer eventId, UpdateEventAdminRequest updateEventAdminRequest) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new ObjectNotFoundException("Event with id=" + eventId + "was not found"));
-        Integer countConfirmed = requestRepository.countConfirmedByEventId(event.getId());
+        Long countConfirmed = requestRepository.countConfirmedByEventId(event.getId());
         if (updateEventAdminRequest.getEventDate() != null && updateEventAdminRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(1))) {
             throw new ValidationException("The start date of the event to be modified must be no earlier than an hour from the date of publication");
         }
@@ -322,6 +325,10 @@ public class EventServiceImpl implements EventService {
         }
         client.save(StatsMapper.toEndpointHit(httpServletRequest));
 
+        Map<Event, Long> comments = commentRepository.findAllByEventIn(eventList).stream()
+                .collect(groupingBy(Comment::getEvent, counting()));
+        eventList.forEach(event -> event.setComments(comments.get(event)));
+
         List<EventShortDto> eventShortDtoList = eventList.stream().map(EventMapper::toEventShortDto).collect(Collectors.toList());
 
         List<ViewStatsDto> viewStats = getViews(eventList);
@@ -330,9 +337,7 @@ public class EventServiceImpl implements EventService {
             viewMap.put(Integer.parseInt(viewStat.getUri().replace("/events/", "")), viewStat.getHits());
         }
         for (EventShortDto eventShortDto : eventShortDtoList) {
-            Integer countComment = commentRepository.countCommentByEventId(eventShortDto.getId());
             eventShortDto.setViews(viewMap.get(eventShortDto.getId()));
-            eventShortDto.setComments(countComment);
         }
         if (param.getSort().equals(StateSort.VIEWS.toString())) {
             eventShortDtoList.sort((e1, e2) -> e2.getViews().compareTo(e1.getViews()));
@@ -347,8 +352,8 @@ public class EventServiceImpl implements EventService {
     public EventFullDto getEventId(Integer id, HttpServletRequest httpServletRequest) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Event with id=" + id + "was not found"));
-        Integer countConfirmed = requestRepository.countConfirmedByEventId(event.getId());
-        Integer countComment = commentRepository.countCommentByEventId(event.getId());
+        Long countConfirmed = requestRepository.countConfirmedByEventId(event.getId());
+        Long countComment = commentRepository.countCommentByEventId(event.getId());
         if (!event.getState().equals(State.PUBLISHED)) {
             throw new ObjectNotFoundException("Event with id=" + id + "was not found");
         }
